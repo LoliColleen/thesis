@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>学生选题</title>
+</head>
+<body>
+<h1>学生选题页面</h1>
+<form action="/student/select" method="post">
+  <input type="hidden" name="studentId" value="1"> <!-- 假设学生 ID 为 1 -->
+
+  <h2>请选择你的题目：</h2>
+  <ul>
+    <th:block th:each="topic : ${topics}">
+      <li>
+        <input type="checkbox" th:value="${topic.id}" name="topicIds" th:id="topic_${topic.id}">
+        <label th:for="topic_${topic.id}" th:text="${topic.title}">题目标题</label>
+      </li>
+    </th:block>
+  </ul>
+
+  <button type="submit">提交选题</button>
+</form>
+</body>
+</html>

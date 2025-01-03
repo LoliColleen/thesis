@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>注册页面</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 50px;
+    }
+    form {
+      width: 300px;
+      margin: 0 auto;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+    }
+    button {
+      padding: 10px 20px;
+      width: 100%;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .error {
+      color: red;
+      font-size: 14px;
+    }
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+    }
+    .back-link a {
+      text-decoration: none;
+      color: #4CAF50;
+      font-size: 16px;
+    }
+    .back-link a:hover {
+      color: #45a049;
+    }
+  </style>
+</head>
+<body>
+
+<h2>注册</h2>
+
+<!-- 使用Thymeleaf语法来判断错误信息 -->
+<div th:if="${error}" class="error" th:text="${error}"></div>
+
+<!-- 注册表单 -->
+<form th:action="@{/register}" method="post">
+  <label for="username">用户名:</label>
+  <input type="text" id="username" name="username" required>
+
+  <label for="password">密码:</label>
+  <input type="password" id="password" name="password" required>
+
+  <label for="confirmPassword">确认密码:</label>
+  <input type="password" id="confirmPassword" name="confirmPassword" required>
+
+  <button type="submit">注册</button>
+</form>
+
+<div class="back-link">
+  <a th:href="@{/login}">返回登录页面</a>
+</div>
+
+</body>
+</html>
