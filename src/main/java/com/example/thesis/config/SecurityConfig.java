@@ -14,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import javax.sql.DataSource;
 
@@ -25,6 +26,8 @@ public class SecurityConfig {
 
     @Autowired
     private DataSource dataSource;
+    @Autowired
+    private AuthenticationSuccessHandler authenticationSuccessHandler;
 
     // 配置密码编码器
     @Bean
@@ -44,8 +47,8 @@ public class SecurityConfig {
         JdbcUserDetailsManager userDetailsManager = new JdbcUserDetailsManager(dataSource);
 
         // 配置查询用户信息的 SQL
-        userDetailsManager.setUsersByUsernameQuery("SELECT username, password, enabled FROM users WHERE username = ?");
-        userDetailsManager.setAuthoritiesByUsernameQuery("SELECT username, role FROM users WHERE username = ?");
+        userDetailsManager.setUsersByUsernameQuery("SELECT username, password, enabled FROM user WHERE username = ?");
+        userDetailsManager.setAuthoritiesByUsernameQuery("SELECT username, role FROM user WHERE username = ?");
 
         return userDetailsManager;
     }
@@ -57,6 +60,9 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable) // Disable CSRF for simplicity
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/register").permitAll()
+                .requestMatchers("/auth/welcome").permitAll() // Permit all access to /auth/welcome
+                .requestMatchers("/auth/user/**").authenticated() // Require authentication for /auth/user/**
+                .requestMatchers("/auth/admin/**").authenticated() // Require authentication for /auth/admin/**
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/teacher/**").hasRole("TEACHER")
                 .requestMatchers("/api/student/**").hasRole("STUDENT")
@@ -64,7 +70,7 @@ public class SecurityConfig {
             .formLogin(form -> form
                 .loginPage("/login")
                 //.loginProcessingUrl("/announcementList")
-                .defaultSuccessUrl("/view/announcementList")
+                .successHandler(authenticationSuccessHandler)
                 .failureUrl("/login?error=true")
                 .permitAll()
             );

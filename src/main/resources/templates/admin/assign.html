@@ -13,7 +13,7 @@
   <th:block th:each="student : ${students}">
     <li>
       <span th:text="${student.name}">学生姓名</span>
-      <form action="/admin/assign" method="post">
+      <form action="/api/admin/assign" method="post">
         <input type="hidden" name="studentId" th:value="${student.id}">
 
         <label for="teacherId">分配教师：</label>

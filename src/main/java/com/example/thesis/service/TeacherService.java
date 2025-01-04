@@ -23,7 +23,7 @@ public class TeacherService {
             .orElseThrow(() -> new RuntimeException("Student not found"));
 
         // 校验教师是否已选满学生
-        if (teacher.getStudents().size() >= teacher.getMaxStudents()) {
+        if (teacher.getStudents().size() >= 5) {
             throw new RuntimeException("Teacher cannot select more students");
         }
 
@@ -32,7 +32,6 @@ public class TeacherService {
             throw new RuntimeException("Student already has a primary teacher");
         }
 
-        // 选择学生
         teacher.getStudents().add(student);
         student.setPrimaryTeacher(teacher);
 

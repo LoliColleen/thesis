@@ -9,13 +9,15 @@ import com.example.thesis.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Set;
 
-@RestController
+@Controller
 @RequestMapping("/api/admin")
 public class AdminController {
     @Autowired
@@ -36,22 +38,29 @@ public class AdminController {
         }
     }
 
-    // 获取未分配教师的学生列表
-    @GetMapping("/unassigned-students")
-    public ResponseEntity<List<Student>> getUnassignedStudents() {
-        List<Student> unassignedStudents = adminService.getUnassignedStudents();
-        return ResponseEntity.ok(unassignedStudents);
-    }
-
+    // 显示未分配学生页面
     @GetMapping("/assign")
-    public String assignStudents(Model model) {
+    public String showUnassignedStudents(Model model) {
         List<Student> students = adminService.getUnassignedStudents();
         List<Teacher> teachers = teacherRepository.findAll();
-
         model.addAttribute("students", students);
-        model.addAttribute("teachers", teachers); // 添加教师列表
+        model.addAttribute("teachers", teachers);
+        return "admin/assign";  // 显示人工调剂页面
+    }
 
-        return "admin"; // 返回管理员调剂页面
+    // 提交人工调剂
+    @PostMapping("/assign")
+    public String assignStudentToTeacher(@RequestParam Long studentId,
+                                         @RequestParam Long teacherId,
+                                         RedirectAttributes redirectAttributes) {
+        try {
+            adminService.allocateStudentToTeacher(studentId, teacherId);
+            redirectAttributes.addFlashAttribute("message", "学生分配成功");
+            return "redirect:/api/admin/assign";  // 重定向到管理员调剂页面
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/api/admin/assign";
+        }
     }
 }
 

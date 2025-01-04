@@ -22,9 +22,9 @@ public class StudentService {
         Student student = studentRepository.findById(studentId)
             .orElseThrow(() -> new RuntimeException("Student not found"));
 
-        // 校验选题数量是否超过最大限制
-        if (topicIds.size() > student.getMaxTopics()) {
-            throw new RuntimeException("Cannot select more than " + student.getMaxTopics() + " topics");
+        // 校验学生最多选择2个题目
+        if (topicIds.size() > 2) {
+            throw new RuntimeException("Cannot select more than 2 topics");
         }
 
         Set<Topic> selectedTopics = new HashSet<>();

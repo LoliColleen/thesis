@@ -1,6 +1,5 @@
 package com.example.thesis.service;
 
-import com.example.thesis.entity.Role;
 import com.example.thesis.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
@@ -37,7 +36,7 @@ public class UserServiceImpl implements UserService {
         return org.springframework.security.core.userdetails.User.builder()
             .username(user.getUsername())
             .password(user.getPassword())  // 密码从数据库获取，通常需要加密存储
-            .roles(user.getRole().name())  // 角色信息
+            .roles(user.getRole())  // 角色信息
             .build();
     }
 
@@ -53,7 +52,8 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(password));
 
         // 设置角色
-        switch (role.toUpperCase()) {
+        user.setRole("ROLE_" + role.toUpperCase());
+        /* switch (role.toUpperCase()) {
             case "STUDENT":
                 user.setRole(Role.STUDENT);
                 break;
@@ -65,7 +65,7 @@ public class UserServiceImpl implements UserService {
                 break;
             default:
                 user.setRole(Role.STUDENT);  // 默认设置为学生
-        }
+        } */
 
         userRepository.save(user);  // 保存用户
         return true;

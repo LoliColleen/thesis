@@ -5,43 +5,46 @@ import com.example.thesis.entity.Topic;
 import com.example.thesis.repository.StudentRepository;
 import com.example.thesis.repository.TopicRepository;
 import com.example.thesis.service.StudentService;
+import com.example.thesis.service.TopicService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-@RestController
+@Controller
 @RequestMapping("/api/student")
 public class StudentController {
     @Autowired
-    private TopicRepository topicRepository;
-
+    private StudentService studentService;
     @Autowired
-    private StudentRepository studentRepository;
+    private TopicService topicService;
 
+    // 学生选题页面
     @GetMapping("/select")
-    public String showTopics(Model model) {
-        List<Topic> topics = topicRepository.findAll();
-        model.addAttribute("topics", topics);
-        return "student"; // 返回学生选题页面
+    public String showSelectTopicsPage(Model model) {
+        List<Topic> availableTopics = topicService.getAvailableTopics();
+        model.addAttribute("topics", availableTopics);
+        return "student/select";
     }
 
+    // 提交选题
     @PostMapping("/select")
-    public String selectTopics(Long studentId, List<Long> topicIds) {
-        Student student = studentRepository.findById(studentId)
-            .orElseThrow(() -> new RuntimeException("Student not found"));
-
-        List<Topic> selectedTopics = topicRepository.findAllById(topicIds);
-        student.setSelectedTopics(new HashSet<>(selectedTopics));
-        studentRepository.save(student);
-
-        return "redirect:/student/select"; // 重定向到选题页面
+    public String selectTopics(@RequestParam Long studentId,
+                               @RequestParam Set<Long> topicIds,
+                               RedirectAttributes redirectAttributes) {
+        try {
+            studentService.selectTopics(studentId, topicIds);
+            redirectAttributes.addFlashAttribute("message", "选题成功");
+            return "redirect:/api/student/select";  // 重定向到选题页面
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/api/student/select";
+        }
     }
 }
 

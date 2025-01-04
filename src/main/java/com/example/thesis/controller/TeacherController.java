@@ -10,13 +10,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Set;
 
-@RestController
+@Controller
 @RequestMapping("/api/teacher")
 public class TeacherController {
     @Autowired
@@ -35,21 +37,49 @@ public class TeacherController {
         return ResponseEntity.ok(topics);
     }
 
-    // 教师选择学生
-    @PostMapping("/select-student")
-    public ResponseEntity<String> selectStudent(@RequestParam Long teacherId, @RequestParam Long studentId) {
+    // 提交选择学生
+    @PostMapping("/select")
+    public String selectStudents(@RequestParam Long teacherId,
+                                 @RequestParam List<Long> studentIds,
+                                 RedirectAttributes redirectAttributes) {
         try {
-            teacherService.selectStudent(teacherId, studentId);
-            return ResponseEntity.ok("Student selected successfully");
+            for (Long studentId : studentIds) {
+                teacherService.selectStudent(teacherId, studentId);
+            }
+            redirectAttributes.addFlashAttribute("message", "学生选择成功");
+            return "redirect:/api/teacher/select";  // 重定向到教师选择学生页面
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/api/teacher/select";
         }
     }
 
     @GetMapping("/select")
     public String showStudents(Model model) {
-        List<Student> students = studentRepository.findAll();
+        List<Student> students = studentRepository.findByPrimaryTeacherIsNull();
         model.addAttribute("students", students);
-        return "teacher"; // 返回教师选择学生页面
+        return "teacher/select"; // 返回教师选择学生页面
+    }
+
+    // 教师出题页面
+    @GetMapping("/addTopic")
+    public String showAddTopicPage(Model model) {
+        return "teacher/addTopic";  // 返回前端页面
+    }
+
+    // 提交题目
+    @PostMapping("/addTopic")
+    public String addTopic(@RequestParam Long teacherId,
+                           @RequestParam String title,
+                           @RequestParam String description,
+                           RedirectAttributes redirectAttributes) {
+        try {
+            topicService.addTopic(teacherId, title, description);
+            redirectAttributes.addFlashAttribute("message", "题目添加成功");
+            return "redirect:/api/teacher/addTopic";  // 重定向到教师出题页面
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/api/teacher/addTopic";
+        }
     }
 }

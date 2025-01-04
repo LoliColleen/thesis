@@ -35,11 +35,13 @@ public class LoginController {
         if (userService.validateUser(username, password)) {
             // 登录成功，获取用户的 UserDetails
             UserDetails userDetails = userService.loadUserByUsername(username);
+            System.out.println("User logged in: " + username);
 
             // 构造一个认证对象
             UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(username, password,
                     List.of(new SimpleGrantedAuthority("ROLE_USER"))); // 可以根据数据库角色信息进一步优化
+            System.out.println("User logged in: " + username);
 
             // 将认证对象存储到 SecurityContext
             SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -47,6 +49,7 @@ public class LoginController {
             return "redirect:/api/student";  // TODO: 登录成功后重定向
         } else {
             // 登录失败，返回登录页并显示错误消息
+            System.out.println("Invalid username or password");
             redirectAttributes.addFlashAttribute("error", "用户名或密码错误");
             return "redirect:/login";  // 登录失败后重定向回登录页
         }

@@ -22,15 +22,19 @@ public class TopicService {
     public Topic addTopic(Long teacherId, String title, String description) {
         Teacher teacher = teacherRepository.findById(teacherId)
             .orElseThrow(() -> new RuntimeException("Teacher not found"));
-        if (teacher.getTopics().size() >= teacher.getMaxTopics()) {
+
+        // 校验教师是否已经出满5个题
+        if (teacher.getTopics().size() >= 5) {
             throw new RuntimeException("Maximum number of topics reached for this teacher");
         }
+
         Topic topic = new Topic();
         topic.setTitle(title);
         topic.setDescription(description);
         topic.setTeacher(teacher);
         return topicRepository.save(topic);
     }
+
 
     // 根据教师ID分页查询题目
     public Page<Topic> getTopicsByTeacherId(Long teacherId, int page, int size) {
@@ -47,8 +51,10 @@ public class TopicService {
     }
 
     // 获取可选状态的题目
-    public Page<Topic> getAvailableTopics() {
-        return topicRepository.findByStatus(Topic.Status.AVAILABLE, PageRequest.of(0, 10)); // TODO: 我不确定size应该填多少
+    public List<Topic> getAvailableTopics() {
+        Page<Topic> page = topicRepository.findByStatus(Topic.Status.AVAILABLE, PageRequest.of(0, 10));
+        return page.getContent();  // 从 Page 中提取 List
     }
+
 }
 

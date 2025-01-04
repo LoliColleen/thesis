@@ -9,7 +9,7 @@
 <h1>教师选择学生</h1>
 
 <h2>请选择学生：</h2>
-<form action="/teacher/select" method="post">
+<form action="/api/teacher/select" method="post">
   <ul>
     <th:block th:each="student : ${students}">
       <li>
@@ -18,6 +18,7 @@
       </li>
     </th:block>
   </ul>
+
   <button type="submit">提交选择</button>
 </form>
 </body>
