@@ -12,7 +12,7 @@
       width: 300px;
       margin: 0 auto;
     }
-    input {
+    input, select {
       width: 100%;
       padding: 10px;
       margin: 10px 0;
@@ -51,7 +51,7 @@
 
 <h2>注册</h2>
 
-<!-- 使用Thymeleaf语法来判断错误信息 -->
+<!-- 错误信息显示 -->
 <div th:if="${error}" class="error" th:text="${error}"></div>
 
 <!-- 注册表单 -->
@@ -64,6 +64,13 @@
 
   <label for="confirmPassword">确认密码:</label>
   <input type="password" id="confirmPassword" name="confirmPassword" required>
+
+  <label for="role">选择身份:</label>
+  <select id="role" name="role" required>
+    <option value="STUDENT">学生</option>
+    <option value="TEACHER">老师</option>
+    <option value="ADMIN">管理员</option>
+  </select>
 
   <button type="submit">注册</button>
 </form>

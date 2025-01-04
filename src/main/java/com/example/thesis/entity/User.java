@@ -24,16 +24,14 @@ public class User {
     private String password;
 
     @Column(nullable = false)
-    private String role; // student, teacher, admin
+    @Enumerated(EnumType.STRING)
+    private Role role; // student, teacher, admin
 
-    @Column(nullable = false)
-    private String name;
-
-    @ManyToMany
+    /*@ManyToMany
     @JoinTable(
         name = "user_role",
         joinColumns = @JoinColumn(name = "user_id"),
         inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Set<Role> roles = new HashSet<>();
+    private Set<Role> roles = new HashSet<>();*/
 }
