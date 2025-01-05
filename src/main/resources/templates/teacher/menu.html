@@ -46,6 +46,10 @@
 
 <h1>教师操作菜单</h1>
 
+<!-- 显示错误消息 -->
+<div th:if="${error}" class="error" th:text="${error}"></div>
+<p th:if="${param.error}" class="error">Invalid username or password</p>
+
 <!-- 教师操作链接 -->
 <a href="/api/teacher/addTopic">添加题目</a>
 <a href="/api/teacher/select">选择学生</a>
@@ -63,7 +67,15 @@
         <h4>已选学生：</h4>
         <ul>
           <th:block th:each="student : ${topic.students}">
-            <li th:text="${student.user.username}">学生姓名</li>
+            <li>
+              <span th:text="${student.user.username}">学生姓名</span>
+              <!-- 取消选择按钮 -->
+              <form action="/api/teacher/cancelSelection" method="post">
+                <input type="hidden" name="studentId" th:value="${student.id}">
+                <input type="hidden" name="topicId" th:value="${topic.id}">
+                <button type="submit">取消选择</button>
+              </form>
+            </li>
           </th:block>
         </ul>
       </div>

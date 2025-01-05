@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>管理员人工调剂</title>
 </head>
+
 <body>
 <h1>管理员人工调剂</h1>
 
 <h2>未分配学生：</h2>
+<!-- 显示错误消息 -->
+<div th:if="${error}" class="error" th:text="${error}"></div>
 <ul>
   <th:block th:each="student : ${students}">
     <li>
@@ -16,11 +20,12 @@
       <form action="/api/admin/assign" method="post">
         <input type="hidden" name="studentId" th:value="${student.id}">
 
-        <label for="teacherId">分配教师：</label>
-        <!-- 教师选择下拉框 -->
-        <select name="teacherId" id="teacherId" required>
-          <th:block th:each="teacher : ${teachers}">
-            <option th:value="${teacher.id}" th:text="${teacher.user.username}">教师姓名</option>
+        <label for="topicId">分配题目：</label>
+        <!-- 选择题目的下拉框 -->
+        <select name="topicId" id="topicId" required>
+          <th:block th:each="topic : ${topics}">
+            <!-- 显示题目标题和教师姓名 -->
+            <option th:value="${topic.id}" th:text="${topic.title} + ' - ' + ${topic.teacher.user.username}">题目标题 - 教师姓名</option>
           </th:block>
         </select>
 
@@ -30,4 +35,5 @@
   </th:block>
 </ul>
 </body>
+
 </html>

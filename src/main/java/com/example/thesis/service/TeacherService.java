@@ -24,12 +24,12 @@ public class TeacherService {
 
         // 校验教师是否已选满学生
         if (teacher.getStudents().size() >= 5) {
-            throw new RuntimeException("Teacher cannot select more students");
+            throw new RuntimeException("最多选择5名学生");
         }
 
         // 校验学生是否已经被选择
         if (student.getPrimaryTeacher() != null) {
-            throw new RuntimeException("Student already has a primary teacher");
+            throw new RuntimeException("该学生已被选择");
         }
 
         teacher.getStudents().add(student);

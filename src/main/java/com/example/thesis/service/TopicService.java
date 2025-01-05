@@ -25,7 +25,7 @@ public class TopicService {
 
         // 校验教师是否已经出满5个题
         if (teacher.getTopics().size() >= 5) {
-            throw new RuntimeException("Maximum number of topics reached for this teacher");
+            throw new RuntimeException("无法创建更多题目");
         }
 
         Topic topic = new Topic();

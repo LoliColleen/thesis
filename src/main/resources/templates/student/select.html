@@ -7,15 +7,33 @@
 </head>
 <body>
 <h1>学生选题页面</h1>
-<form action="/api/student/select" method="post">
-  <input type="hidden" name="studentId" value="1"> <!-- 假设学生 ID 为 1 -->
 
-  <h2>请选择你的题目：</h2>
+<h2>已选择的题目：</h2>
+<!-- 显示错误消息 -->
+<div th:if="${error}" class="error" th:text="${error}"></div>
+<div>
+  <th:block th:each="topic : ${selectedTopics}">
+    <div>
+      <span th:text="${topic.title}">题目标题</span>
+      <span>来自教师: <span th:text="${topic.teacher.user.username}">教师姓名</span></span>
+      <form action="/api/student/select/cancel" method="post">
+        <input type="hidden" name="topicId" th:value="${topic.id}">
+        <button type="submit" name="action" value="remove">取消选择</button>
+      </form>
+    </div>
+  </th:block>
+</div>
+
+<h2>请选择你的题目：</h2>
+<form action="/api/student/select" method="post">
+
   <ul>
-    <th:block th:each="topic : ${topics}">
+    <th:block th:each="topic : ${availableTopics}">
       <li>
         <input type="checkbox" th:value="${topic.id}" name="topicIds" th:id="'topic_' + ${topic.id}">
         <label th:for="'topic_' + ${topic.id}" th:text="${topic.title}">题目标题</label>
+        <p>来自教师: <span th:text="${topic.teacher.user.username}">教师姓名</span></p>
+        <p th:text="${topic.description}">题目描述</p>
       </li>
     </th:block>
   </ul>
