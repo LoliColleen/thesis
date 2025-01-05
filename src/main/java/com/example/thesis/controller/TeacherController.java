@@ -2,7 +2,10 @@ package com.example.thesis.controller;
 
 import com.example.thesis.entity.Student;
 import com.example.thesis.entity.Topic;
+import com.example.thesis.entity.User;
 import com.example.thesis.repository.StudentRepository;
+import com.example.thesis.repository.TeacherRepository;
+import com.example.thesis.repository.UserRepository;
 import com.example.thesis.service.StudentService;
 import com.example.thesis.service.TeacherService;
 import com.example.thesis.service.TopicService;
@@ -10,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +31,10 @@ public class TeacherController {
     private TopicService topicService;
     @Autowired
     private StudentRepository studentRepository;
+    @Autowired
+    private TeacherRepository teacherRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     // 跳转到教师操作菜单页面
     @GetMapping("/menu")
@@ -45,12 +53,11 @@ public class TeacherController {
 
     // 提交选择学生
     @PostMapping("/select")
-    public String selectStudents(@RequestParam Long teacherId,
-                                 @RequestParam List<Long> studentIds,
+    public String selectStudents(@RequestParam List<Long> studentIds,
                                  RedirectAttributes redirectAttributes) {
         try {
             for (Long studentId : studentIds) {
-                teacherService.selectStudent(teacherId, studentId);
+                teacherService.selectStudent(teacherRepository.findByUserId(userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).getId()).get().getId(), studentId);
             }
             redirectAttributes.addFlashAttribute("message", "学生选择成功");
             return "redirect:/api/teacher/select";  // 重定向到教师选择学生页面

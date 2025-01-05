@@ -10,6 +10,8 @@
 
 <h2>请选择学生：</h2>
 <form action="/api/teacher/select" method="post">
+  <input type="hidden" name="user" th:value="${user}" />
+
   <ul>
     <th:block th:each="student : ${students}">
       <li>
