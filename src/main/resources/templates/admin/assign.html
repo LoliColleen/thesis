@@ -5,35 +5,136 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>管理员人工调剂</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f7fa;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1, h2 {
+      color: #333;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .error {
+      color: red;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .student-list {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .student-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      background-color: #fafafa;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .student-info {
+      flex: 1;
+    }
+
+    select, button {
+      padding: 8px;
+      margin: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    select:focus, button:focus {
+      outline: none;
+      border-color: #007bff;
+    }
+
+    .topic-label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+      .container {
+        padding: 15px;
+      }
+
+      .student-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .student-info {
+        margin-bottom: 10px;
+      }
+    }
+  </style>
 </head>
 
 <body>
-<h1>管理员人工调剂</h1>
 
-<h2>未分配学生：</h2>
-<!-- 显示错误消息 -->
-<div th:if="${error}" class="error" th:text="${error}"></div>
-<ul>
-  <th:block th:each="student : ${students}">
-    <li>
-      <span th:text="${student.user.username}">学生姓名</span>
-      <form action="/api/admin/assign" method="post">
-        <input type="hidden" name="studentId" th:value="${student.id}">
+<div class="container">
+  <h1>管理员人工调剂</h1>
 
-        <label for="topicId">分配题目：</label>
-        <!-- 选择题目的下拉框 -->
-        <select name="topicId" id="topicId" required>
-          <th:block th:each="topic : ${topics}">
-            <!-- 显示题目标题和教师姓名 -->
-            <option th:value="${topic.id}" th:text="${topic.title} + ' - ' + ${topic.teacher.user.username}">题目标题 - 教师姓名</option>
-          </th:block>
-        </select>
+  <h2>未分配学生：</h2>
+  <!-- 显示错误消息 -->
+  <div th:if="${error}" class="error" th:text="${error}"></div>
 
-        <button type="submit">分配</button>
-      </form>
-    </li>
-  </th:block>
-</ul>
+  <ul class="student-list">
+    <th:block th:each="student : ${students}">
+      <li class="student-item">
+        <div class="student-info">
+          <span th:text="${student.user.username}">学生姓名</span>
+        </div>
+        <form action="/api/admin/assign" method="post" style="flex: 1; display: flex; justify-content: space-between; align-items: center;">
+          <input type="hidden" name="studentId" th:value="${student.id}">
+
+          <div>
+            <label for="topicId" class="topic-label">分配题目：</label>
+            <select name="topicId" id="topicId" required>
+              <th:block th:each="topic : ${topics}">
+                <option th:value="${topic.id}" th:text="${topic.title} + ' - ' + ${topic.teacher.user.username}">题目标题 - 教师姓名</option>
+              </th:block>
+            </select>
+          </div>
+
+          <div>
+            <button type="submit">分配</button>
+          </div>
+        </form>
+      </li>
+    </th:block>
+  </ul>
+</div>
+
 </body>
 
 </html>

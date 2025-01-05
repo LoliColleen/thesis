@@ -110,7 +110,12 @@ public class TeacherController {
     @GetMapping("/select")
     public String showStudents(Model model, RedirectAttributes redirectAttributes) {
         // 获取当前登录教师 ID
-        Long teacherId = getCurrentTeacherId();
+        var optional = teacherRepository.findByUserId(userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).getId());
+        if (optional.isEmpty()) {
+            redirectAttributes.addFlashAttribute("error", "无法获取当前教师信息");
+            return "redirect:/api/teacher/menu"; // 重定向到教师菜单页面
+        }
+        Long teacherId = optional.get().getId();
 
         // 查询该教师名下的所有学生，且这些学生没有被分配主教师，并且选的 topic 属于当前教师
         List<Student> students = studentRepository.findByPrimaryTeacherIsNullAndSelectedTopicsTeacherId(teacherId);
@@ -122,6 +127,7 @@ public class TeacherController {
         }
 
         model.addAttribute("students", students);
+        model.addAttribute("currentTeacherId", teacherId);
         return "teacher/select"; // 返回教师选择学生页面
     }
 

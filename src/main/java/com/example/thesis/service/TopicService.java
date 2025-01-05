@@ -35,7 +35,6 @@ public class TopicService {
         return topicRepository.save(topic);
     }
 
-
     // 根据教师ID分页查询题目
     public Page<Topic> getTopicsByTeacherId(Long teacherId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);

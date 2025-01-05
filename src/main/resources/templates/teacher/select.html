@@ -18,10 +18,13 @@
         <input type="checkbox" th:value="${student.id}" name="studentIds" th:id="'student_' + ${student.id}">
         <label th:for="'student_' + ${student.id}" th:text="${student.user.username}">学生姓名</label>
 
-        <!-- 显示学生已选择的题目 -->
+        <!-- 显示学生已选择的题目（只显示属于当前教师的题目） -->
         <ul>
           <th:block th:each="topic : ${student.selectedTopics}">
-            <li th:text="${topic.title}">题目名称</li>
+            <!-- 只显示当前教师的题目 -->
+            <th:block th:if="${topic.teacher.id == currentTeacherId}">
+              <li th:text="${topic.title}">题目名称</li>
+            </th:block>
           </th:block>
         </ul>
       </li>

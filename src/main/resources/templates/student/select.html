@@ -1,44 +1,214 @@
 <!DOCTYPE html>
 <html lang="zh">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>学生选题</title>
-</head>
-<body>
-<h1>学生选题页面</h1>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f4f7fc;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
 
-<h2>已选择的题目：</h2>
-<!-- 显示错误消息 -->
-<div th:if="${error}" class="error" th:text="${error}"></div>
-<div>
-  <th:block th:each="topic : ${selectedTopics}">
-    <div>
-      <span th:text="${topic.title}">题目标题</span>
-      <span>来自教师: <span th:text="${topic.teacher.user.username}">教师姓名</span></span>
-      <form action="/api/student/select/cancel" method="post">
-        <input type="hidden" name="topicId" th:value="${topic.id}">
-        <button type="submit" name="action" value="remove">取消选择</button>
-      </form>
+    h1 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .container {
+      background-color: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 800px;
+      text-align: center;
+    }
+
+    h2 {
+      color: #4CAF50;
+      margin-bottom: 20px;
+    }
+
+    h3 {
+      color: #333;
+      margin-top: 20px;
+    }
+
+    .error {
+      color: #ff4c4c;
+      background-color: #ffe6e6;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .topic-list {
+      text-align: left;
+      margin-bottom: 20px;
+    }
+
+    .topic-item {
+      background-color: #f9f9f9;
+      padding: 15px;
+      border-radius: 5px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      margin-bottom: 10px;
+    }
+
+    .topic-item label {
+      font-weight: bold;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .topic-item p {
+      margin: 5px 0;
+    }
+
+    .btn {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+
+    .btn:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    .btn:hover:not(:disabled) {
+      background-color: #45a049;
+    }
+
+    .checkbox-group {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .checkbox-group li {
+      margin-bottom: 15px;
+      background-color: #f0f8ff;
+      padding: 15px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .checkbox-group input {
+      margin-right: 10px;
+    }
+
+    .form-section {
+      margin-top: 20px;
+    }
+
+    .form-section ul {
+      padding: 0;
+    }
+
+    .form-section ul li {
+      display: flex;
+      flex-direction: column;
+    }
+
+  </style>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const submitButton = document.getElementById("submitButton");
+      const topicCheckboxes = document.querySelectorAll('input[name="topicIds"]');
+      const errorMessage = document.getElementById("errorMessage");
+
+      function checkSelection() {
+        const selectedTopics = Array.from(topicCheckboxes).filter(checkbox => checkbox.checked);
+        submitButton.disabled = selectedTopics.length === 0;
+        errorMessage.style.display = selectedTopics.length === 0 ? 'block' : 'none';
+      }
+
+      topicCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', checkSelection);
+      });
+
+      checkSelection();  // 页面加载时初次检查
+    });
+  </script>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>学生选题页面</h1>
+
+  <!-- 显示全局错误消息 -->
+  <div id="globalErrorMessage" class="error" style="display:none;">发生了一个错误，请稍后再试。</div>
+
+  <!-- 显示其他错误信息 -->
+  <div id="errorMessage" class="error">请选择至少一个题目</div>
+
+  <!-- 如果学生有主导师，显示已选择的题目 -->
+  <div th:if="${primaryTeacher != null}">
+    <h2>已选择的题目：</h2>
+    <div th:each="topic : ${selectedTopics}" class="topic-list">
+      <div class="topic-item">
+        <span th:text="${topic.title}">题目标题</span><br>
+        <span>来自教师: <span th:text="${topic.teacher.user.username}">教师姓名</span></span><br>
+        <p th:text="${topic.description}">题目描述</p>
+      </div>
     </div>
-  </th:block>
+
+    <h3>你的主导师: <span th:text="${primaryTeacher.user.username}">教师姓名</span></h3>
+    <p>你已选择了题目，无法进行其他操作。</p>
+  </div>
+
+  <!-- 如果学生没有主导师，允许选择题目 -->
+  <div th:if="${primaryTeacher == null}">
+    <h2>已选择的题目：</h2>
+    <div th:each="topic : ${selectedTopics}" class="topic-list">
+      <div class="topic-item">
+        <span th:text="${topic.title}">题目标题</span><br>
+        <span>来自教师: <span th:text="${topic.teacher.user.username}">教师姓名</span></span><br>
+        <form action="/api/student/select/cancel" method="post">
+          <input type="hidden" name="topicId" th:value="${topic.id}">
+          <button type="submit" name="action" value="remove" class="btn">取消选择</button>
+        </form>
+      </div>
+    </div>
+
+    <h2>请选择你的题目：</h2>
+    <form action="/api/student/select" method="post">
+      <div class="form-section">
+        <ul class="checkbox-group">
+          <th:block th:each="topic : ${availableTopics}">
+            <li>
+              <input type="checkbox" th:value="${topic.id}" name="topicIds" th:id="'topic_' + ${topic.id}">
+              <label th:for="'topic_' + ${topic.id}" th:text="${topic.title}">题目标题</label>
+              <p>来自教师: <span th:text="${topic.teacher.user.username}">教师姓名</span></p>
+              <p th:text="${topic.description}">题目描述</p>
+            </li>
+          </th:block>
+        </ul>
+
+        <!-- 提交按钮，初始时禁用 -->
+        <button id="submitButton" type="submit" class="btn" disabled>提交选题</button>
+      </div>
+    </form>
+  </div>
 </div>
 
-<h2>请选择你的题目：</h2>
-<form action="/api/student/select" method="post">
-
-  <ul>
-    <th:block th:each="topic : ${availableTopics}">
-      <li>
-        <input type="checkbox" th:value="${topic.id}" name="topicIds" th:id="'topic_' + ${topic.id}">
-        <label th:for="'topic_' + ${topic.id}" th:text="${topic.title}">题目标题</label>
-        <p>来自教师: <span th:text="${topic.teacher.user.username}">教师姓名</span></p>
-        <p th:text="${topic.description}">题目描述</p>
-      </li>
-    </th:block>
-  </ul>
-
-  <button type="submit">提交选题</button>
-</form>
 </body>
+
 </html>

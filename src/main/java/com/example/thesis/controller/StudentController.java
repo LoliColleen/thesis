@@ -40,6 +40,23 @@ public class StudentController {
         var student = studentRepository.findByUserId(userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).getId()).orElse(null);
 
         if (student != null) {
+            // 如果学生已经有主导师，显示已选题目并禁止修改
+            if (student.getPrimaryTeacher() != null) {
+                Set<Topic> selectedTopics = student.getSelectedTopics();
+
+                // 过滤出主导师发布的题目
+                Set<Topic> primaryTeacherTopics = new HashSet<>();
+                for (Topic topic : selectedTopics) {
+                    if (topic.getTeacher().equals(student.getPrimaryTeacher())) {
+                        primaryTeacherTopics.add(topic);
+                    }
+                }
+
+                model.addAttribute("selectedTopics", primaryTeacherTopics);
+                model.addAttribute("primaryTeacher", student.getPrimaryTeacher());
+                return "student/select";  // 不允许学生修改选题，直接返回
+            }
+
             // 获取学生已经选择的题目
             Set<Topic> selectedTopics = student.getSelectedTopics();
 
@@ -90,9 +107,11 @@ public class StudentController {
             try {
                 studentService.cancelTopicSelection(studentOpt.get().getId(), topicId);
                 redirectAttributes.addFlashAttribute("message", "取消选题成功");
+                System.out.printf("取消选题成功");
                 return "redirect:/api/student/select";  // 重定向到选题页面
             } catch (RuntimeException e) {
                 redirectAttributes.addFlashAttribute("error", e.getMessage());
+                System.out.printf(e.getMessage());
                 return "redirect:/api/student/select";
             }
         } else {
