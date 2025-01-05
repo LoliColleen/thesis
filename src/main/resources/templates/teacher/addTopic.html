@@ -7,6 +7,15 @@
 </head>
 <body>
 <h1>添加题目</h1>
+
+<!-- 显示消息 -->
+<div th:if="${message != null}">
+  <p th:text="${message}" style="color: green;"></p>
+</div>
+<div th:if="${error != null}">
+  <p th:text="${error}" style="color: red;"></p>
+</div>
+
 <form action="/api/teacher/addTopic" method="post">
   <input type="hidden" name="teacherId" value="1"> <!-- 假设教师 ID 为 1 -->
   <label for="title">题目标题：</label>

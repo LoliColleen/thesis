@@ -1,8 +1,14 @@
 package com.example.thesis.controller;
 
+import com.example.thesis.entity.Student;
+import com.example.thesis.entity.Teacher;
+import com.example.thesis.repository.StudentRepository;
+import com.example.thesis.repository.TeacherRepository;
 import com.example.thesis.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,6 +25,10 @@ public class LoginController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private StudentRepository studentRepository;
+    @Autowired
+    private TeacherRepository teacherRepository;
 
     // 显示登录页面
     @GetMapping("/login")
@@ -36,6 +46,12 @@ public class LoginController {
             // 登录成功，获取用户的 UserDetails
             UserDetails userDetails = userService.loadUserByUsername(username);
             System.out.println("User logged in: " + username);
+
+            // 根据角色创建对应的实体对象
+            String role = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("角色信息缺失"));
 
             // 构造一个认证对象
             UsernamePasswordAuthenticationToken authentication =

@@ -13,7 +13,7 @@ import java.util.Set;
 @Entity
 public class Teacher {
     @jakarta.persistence.Id
-    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)  // 主键自动生成策略
     private Long id;
 
     @OneToOne
