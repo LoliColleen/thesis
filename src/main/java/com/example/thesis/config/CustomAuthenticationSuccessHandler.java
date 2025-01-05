@@ -26,7 +26,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         // 根据角色跳转到不同页面
         switch (role) {
             case "ROLE_ADMIN" -> response.sendRedirect("/api/admin/assign");
-            case "ROLE_TEACHER" -> response.sendRedirect("/api/teacher/select");
+            case "ROLE_TEACHER" -> response.sendRedirect("/api/teacher/menu");
             case "ROLE_STUDENT" -> response.sendRedirect("/api/student/select");
             default -> response.sendRedirect("/api/student");  // TODO: 默认页面
         }

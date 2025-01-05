@@ -28,6 +28,12 @@ public class TeacherController {
     @Autowired
     private StudentRepository studentRepository;
 
+    // 跳转到教师操作菜单页面
+    @GetMapping("/menu")
+    public String showMenu() {
+        return "teacher/menu";
+    }
+
     // 分页获取教师的题目
     @GetMapping("/{teacherId}/topics")
     public ResponseEntity<Page<Topic>> getTeacherTopics(@PathVariable Long teacherId,
