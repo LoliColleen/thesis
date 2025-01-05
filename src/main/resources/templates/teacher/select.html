@@ -13,13 +13,14 @@
   <ul>
     <th:block th:each="student : ${students}">
       <li>
-        <input type="checkbox" th:value="${student.id}" name="studentIds" th:id="student_${student.id}">
-        <label th:for="student_${student.id}" th:text="${student.name}">学生姓名</label>
+        <input type="checkbox" th:value="${student.id}" name="studentIds" th:id="'student_' + ${student.id}">
+        <label th:for="'student_' + ${student.id}" th:text="${student.user.username}">学生姓名</label>
       </li>
     </th:block>
   </ul>
 
   <button type="submit">提交选择</button>
 </form>
+
 </body>
 </html>
