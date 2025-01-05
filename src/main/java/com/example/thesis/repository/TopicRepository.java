@@ -15,6 +15,9 @@ public interface TopicRepository extends JpaRepository<Topic, Long> {
     // 根据教师ID查询题目并支持分页
     Page<Topic> findByTeacherId(Long teacherId, Pageable pageable);
 
+    // 根据教师ID查询题目并支持分页
+    List<Topic> findByTeacherId(Long teacherId);
+
     // 根据题目状态查询题目
     Page<Topic> findByStatus(Topic.Status status, Pageable pageable);
 

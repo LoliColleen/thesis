@@ -42,6 +42,11 @@ public class TopicService {
         return topicRepository.findByTeacherId(teacherId, pageable);
     }
 
+    // 根据教师ID分页查询题目
+    public List<Topic> getTopicsByTeacherId(Long teacherId) {
+        return topicRepository.findByTeacherId(teacherId);
+    }
+
     // 更新题目状态
     public void updateTopicStatus(Long topicId, Topic.Status status) {
         Topic topic = topicRepository.findById(topicId)

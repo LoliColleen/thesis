@@ -6,39 +6,70 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>教师操作菜单</title>
   <style>
-    /* 简单的样式设置，让菜单看起来更整齐美观 */
     body {
       font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      text-align: center;
+      margin: 50px;
     }
-
-    h1 {
-      color: #333;
-    }
-
     a {
       display: block;
-      width: 200px;
-      margin: 20px auto;
-      padding: 15px;
-      background-color: #007BFF;
-      color: white;
+      margin: 10px 0;
+      color: #4CAF50;
+      font-size: 16px;
       text-decoration: none;
-      border-radius: 5px;
-      transition: background-color 0.3s ease;
     }
-
     a:hover {
-      background-color: #0056b3;
+      color: #45a049;
+    }
+    .topic-list {
+      margin-top: 20px;
+    }
+    .topic-item {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 20px;
+    }
+    .topic-item h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+    .students-list {
+      margin-top: 10px;
+      padding-left: 20px;
+    }
+    .students-list li {
+      list-style-type: square;
     }
   </style>
 </head>
 
 <body>
+
 <h1>教师操作菜单</h1>
+
+<!-- 教师操作链接 -->
 <a href="/api/teacher/addTopic">添加题目</a>
 <a href="/api/teacher/select">选择学生</a>
-</body>
 
+<!-- 显示当前教师已出的题目及对应的学生 -->
+<div class="topic-list">
+  <h3>您出过的题目：</h3>
+  <th:block th:each="topic : ${topics}">
+    <div class="topic-item">
+      <h3 th:text="${topic.title}">题目标题</h3>
+      <p th:text="${topic.description}">题目描述</p>
+
+      <!-- 显示该题目的所有学生 -->
+      <div class="students-list">
+        <h4>已选学生：</h4>
+        <ul>
+          <th:block th:each="student : ${topic.students}">
+            <li th:text="${student.user.username}">学生姓名</li>
+          </th:block>
+        </ul>
+      </div>
+    </div>
+  </th:block>
+</div>
+
+</body>
 </html>

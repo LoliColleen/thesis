@@ -51,8 +51,9 @@
 
 <h2>登录</h2>
 
-<!-- 使用Thymeleaf语法来判断错误信息 -->
+<!-- 显示错误消息 -->
 <div th:if="${error}" class="error" th:text="${error}"></div>
+<p th:if="${param.error}" class="error">Invalid username or password</p>
 
 <!-- 登录表单 -->
 <form action="#" th:action="@{/login}" method="post">

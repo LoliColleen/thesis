@@ -16,7 +16,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
     // 通过教师ID查找教师
     Optional<Teacher> findById(Long id);
 
-    // 通过教师ID查找教师
+    // 通过用户ID查找
     Optional<Teacher> findByUserId(Long id);
 
     // 查找某个教师发布的题目

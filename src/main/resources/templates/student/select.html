@@ -14,8 +14,8 @@
   <ul>
     <th:block th:each="topic : ${topics}">
       <li>
-        <input type="checkbox" th:value="${topic.id}" name="topicIds" th:id="topic_${topic.id}">
-        <label th:for="topic_${topic.id}" th:text="${topic.title}">题目标题</label>
+        <input type="checkbox" th:value="${topic.id}" name="topicIds" th:id="'topic_' + ${topic.id}">
+        <label th:for="'topic_' + ${topic.id}" th:text="${topic.title}">题目标题</label>
       </li>
     </th:block>
   </ul>
