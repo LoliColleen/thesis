@@ -12,7 +12,7 @@
 <ul>
   <th:block th:each="student : ${students}">
     <li>
-      <span th:text="${student.name}">学生姓名</span>
+      <span th:text="${student.user.username}">学生姓名</span>
       <form action="/api/admin/assign" method="post">
         <input type="hidden" name="studentId" th:value="${student.id}">
 
@@ -20,7 +20,7 @@
         <!-- 教师选择下拉框 -->
         <select name="teacherId" id="teacherId" required>
           <th:block th:each="teacher : ${teachers}">
-            <option th:value="${teacher.id}" th:text="${teacher.name}">教师姓名</option>
+            <option th:value="${teacher.id}" th:text="${teacher.user.username}">教师姓名</option>
           </th:block>
         </select>
 
