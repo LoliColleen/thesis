@@ -53,7 +53,7 @@ public class AdminController {
     @GetMapping("/assign")
     public String showUnassignedStudents(Model model) {
         List<Student> students = adminService.getUnassignedStudents();
-        List<Topic> topics = topicService.getAvailableTopics();
+        List<Topic> topics = topicService.getAllTopics();
         model.addAttribute("students", students);
         model.addAttribute("topics", topics);
         return "admin/assign";  // 显示人工调剂页面

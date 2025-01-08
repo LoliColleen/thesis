@@ -49,11 +49,6 @@ public class StudentService {
                 throw new RuntimeException("无法选择同一教师的多个题目");
             }
 
-            // 校验题目是否已被选中
-            if (topic.getStatus() == Topic.Status.SELECTED) {
-                throw new RuntimeException("该题目已被选择");
-            }
-
             // 标记题目为已选
             topic.setStatus(Topic.Status.SELECTED);
             newSelectedTopics.add(topic);

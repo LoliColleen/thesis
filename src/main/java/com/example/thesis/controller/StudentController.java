@@ -70,7 +70,7 @@ public class StudentController {
             }
 
             // 获取所有可以选择的题目（不是当前教师的题目且学生还没选过）
-            List<Topic> availableTopics = new ArrayList<>(topicService.getAvailableTopics());
+            List<Topic> availableTopics = new ArrayList<>(topicService.getAllTopics());
             availableTopics.removeIf(topic -> selectedTeacherIds.contains(topic.getTeacher().getId()));
 
             model.addAttribute("selectedTopics", modifiableSelectedTopics);
@@ -83,7 +83,11 @@ public class StudentController {
     // 提交选题
     @PostMapping("/select")
     public String selectTopics(@RequestParam Set<Long> topicIds, RedirectAttributes redirectAttributes) {
-        var studentOpt = studentRepository.findByUserId(userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).getId());
+        var studentOpt = studentRepository.findByUserId(
+            userRepository.findByUsername(
+                SecurityContextHolder.getContext().getAuthentication().getName()
+            ).getId()
+        );
         if (studentOpt.isPresent()) {
             try {
                 studentService.selectTopics(studentOpt.get().getId(), topicIds);

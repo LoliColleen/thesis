@@ -55,6 +55,12 @@ public class TopicService {
     }
 
     // 获取可选状态的题目
+    public List<Topic> getAllTopics() {
+        Page<Topic> page = topicRepository.findAll(PageRequest.of(0, 10));
+        return page.getContent();  // 从 Page 中提取 List
+    }
+
+    // 获取可选状态的题目
     public List<Topic> getAvailableTopics() {
         Page<Topic> page = topicRepository.findByStatus(Topic.Status.AVAILABLE, PageRequest.of(0, 10));
         return page.getContent();  // 从 Page 中提取 List

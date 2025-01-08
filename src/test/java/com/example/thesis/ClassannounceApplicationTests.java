@@ -1,4 +1,4 @@
-package com.example.thesis.com.example.classannounce;
+package com.example.thesis;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
